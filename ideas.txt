@@ -1,0 +1,11 @@
+Possible features for the model:
+(Non-language processing)
+- Length of title
+- Length of code segments
+- Length of non-code text
+- Tags (We could draw hilarious conclusions if we had a model that only used tags)
+...
+
+(Language processing)
+- Occurence of certain words
+...

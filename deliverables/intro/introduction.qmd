@@ -1,0 +1,8 @@
+---
+title: "Introduction"
+subtitle: "Stack Overflow Question Quality"
+author: "Ryan Tobin, James Westbrook"
+---
+The problem we are interested in is “can we infer the qualities of a ‘good’ Stack Overflow question?” To us, knowing what constitutes a good Stack Overflow question is more interesting than knowing if an arbitrary question is good, thus this is an inference problem. Though there are general guidelines provided by Stack Overflow about what constitutes a good question, such as providing a minimal reproducible example and explaining steps already taken to solve the problem, it would be interesting to both verify that these features actually do make for ‘good’ questions’, and perhaps we could find new features which make a question ‘good’. For our purposes, we will define a ‘good’ question as one which has positive votes, and a ‘bad’ question as one which has negative votes. With this simplistic approach, we will use a classification model, and we expect that a successful model can predict whether a StackOverflow question is good or bad at or above a _% rate. This classification problem is highly important because it flows into many other aspects of the internet: How do we create a model to elevate the most useful information? This applies to search engines, recommendation algorithms, or a Stack Overflow post’s replies.
+
+As for how we will collect our data, we can see a table of all Stack Overflow question IDs at [Stack Overflow Data (kaggle.com)](https://www.kaggle.com/datasets/stackoverflow/stackoverflow). Unfortunately, this table doesn’t contain much information on the posts themselves, so obtaining usable data requires significant (but reasonable) web scraping using the Stack Overflow API. 
