@@ -1,0 +1,18 @@
+---
+title: "Introduction"
+subtitle: "Stack Overflow Question Quality"
+author: "Ryan Tobin, James Westbrook"
+bibliography: references.bib
+csl: diabetologia.csl
+---
+How to ask good questions on technical forums is a somewhat explored topic. Stackoverflow has official guidelines on asking questions [@howtoask], most relevantly by helping readers reproduce their problem with code snippets, including relevant tags, using a helpful title, and using proper grammer. One could intuitively grasp that these are all positive things to include in a question, however some effort has been spent trying to quantify these features. In each case, it is interesting to leverage their definitions of "good" and "bad" questions to decide our own, and additionally to understand which features are likely to improve our inference.
+
+Duijn *et al.* [@duijn] used several methods to determine that code-to-text ratio is an important factor in quality questions. They defined "good" and "bad" questions using score and number of edits, and performed decision tree, logistic regression, and random forest techniques using both definitions. The score criteria outperformed edits somewhat for decision tree and logistic regression. This study gives us insight into potential models to use.
+
+Correa and Sureka [@closed] analyzed "closed" questions, which are questions that were deemed unhelpful to the forum and thus were closed off from further contribution. Through the use of several classification methods, they achieved relative success in predicting closed/not closed questions. Some of the most important features they observed are code snippet length and title length - short code snippets and titles were strong indicators of a closed question. These features will be used in our model.
+
+Chua and Banerjee [@answerability] explored the answerability of Stack Overflow questions to develop what they called the Quest-for-Answer framework. This framework tries attaching some features to the answerability of a question, and the results of this study showed that, surprisingly, posts with downvotes were correlated positively with being answered, short posts were answered more often, and time of post played a significant role in likelihood of being answered. Though this study brings light of potential features to use, we should remark that this study is somewhat independent of what we are trying to accomplish, as the first result indicates that likelihood of answers and community reception are not the same.
+
+### References
+::: {#refs}
+:::
