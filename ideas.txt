@@ -1,3 +1,5 @@
+Feature selection?
+
 Possible features for the model:
 (Non-language processing)
 - Length of title
@@ -9,3 +11,8 @@ Possible features for the model:
 (Language processing)
 - Occurence of certain words
 ...
+
+
+Data Preprocessing:
+- Handle closed questions (probably take them out)
+- Remove low-view questions?

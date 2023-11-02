@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "Related Work"
 subtitle: "Stack Overflow Question Quality"
 author: "Ryan Tobin, James Westbrook"
 bibliography: references.bib
