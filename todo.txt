@@ -1,0 +1,16 @@
+Process data into features (result will be a pandas dataframe)
+
+Implementations:
+- Logistic Regression
+- SVM
+- Extreme Gradient Boosting
+
+Compare classification error(/AUC?) for each
+
+Deliverable 4
+
+Analyze feature importance for each method (this is the inference portion)
+
+Write report (put together and edit deliverables)
+
+Make poster
