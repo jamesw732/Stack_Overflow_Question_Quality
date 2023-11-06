@@ -29,7 +29,7 @@ def str_len_no_whitespace(s):
 
 
 def process_raw(infile, outfile):
-    """Processes raw json into a processed json. Use pd.read_json on this.
+    """Processes raw json into a processed csv.
 
     infile: str, input json filename
     outfile: str, output csv filename"""
