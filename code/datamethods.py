@@ -60,4 +60,8 @@ def process_raw(infile, outfile):
     outdata['code/text'] = outdata['len_codeblocks'] / outdata['body_length']
     outdata['num_tags'] = [len(tags) for tags in indata['tags']]
 
-    outdata.to_csv(outfile)
+    outdata.to_csv(outfile, index=False)
+
+
+if __name__ == '__main__':
+    process_raw('data/raw_data.json', 'data/processed_data.csv')
