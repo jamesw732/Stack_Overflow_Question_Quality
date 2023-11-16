@@ -18,10 +18,8 @@ train = pd.read_csv(os.path.join(datadir, 'train.csv'))
 good_score = train['score'] > 0
 is_answered = train['is_answered']
 # Controversial lines:
-metadata = ['score', 'owner_rep', 'owner_accept_rate', 'is_closed', 'view_count', 'answer_count', 'is_answered']
-train = train[train.columns.drop(metadata)]
-# drop = ['score', 'is_answered']
-# train = train[train.columns.drop(drop)]
+drop = ['score', 'is_answered']
+train = train[train.columns.drop(drop)]
 
 lr = LogisticRegression(max_iter=1000)
 cv = cross_validate(lr, train, good_score, scoring='accuracy')

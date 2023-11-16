@@ -46,12 +46,8 @@ def process_raw(infile, outfile):
     outdata['score'] = indata['score']
     # Metadata Features (May want to exclude from logistic for interpretability):
     outdata['is_answered'] = indata['is_answered']
-    outdata['view_count'] = indata['view_count']
-    outdata['answer_count'] = indata['answer_count']
     outdata['owner_rep'] = [row.get('reputation', 0) for row in indata['owner']]
     outdata['owner_accept_rate'] = [row.get('accept_rate', 0) for row in indata['owner']]
-    outdata['is_closed'] = np.zeros(shape=len(indata), dtype='i1')
-    outdata['is_closed'][~np.isnan(indata['closed_date'])] = 1
     # Primary Data Features:
     html_bodies = indata['body']
     CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
