@@ -4,6 +4,9 @@ import re
 import pandas as pd
 import numpy as np
 import string
+from sklearn.model_selection import train_test_split
+import os
+import pathlib
 
 
 def get_raw_data(filename, startdate):
@@ -62,6 +65,13 @@ def process_raw(infile, outfile):
 
     outdata.to_csv(outfile, index=False)
 
+def split(filename):
+    with open(filename) as f:
+        df = pd.read_csv(f)
+    train, test = train_test_split(df)
+    datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../data'))
+    train.to_csv(os.path.join(datadir, 'train.csv'))
+    test.to_csv(os.path.join(datadir, 'test.csv'))
 
 if __name__ == '__main__':
     process_raw('data/raw_data.json', 'data/processed_data.csv')
