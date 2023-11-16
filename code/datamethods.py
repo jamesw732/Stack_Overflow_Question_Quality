@@ -9,6 +9,9 @@ import os
 import pathlib
 
 
+datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../data'))
+
+
 def get_raw_data(filename, startdate):
     """Gets first 500 questions from startdate and the next 10 days and dumps them into a JSON.
 
@@ -62,6 +65,7 @@ def process_raw(infile, outfile):
     outdata['len_codeblocks'] = [sum([str_len_no_whitespace(block) for block in codeblock]) for codeblock in codeblocks]
     outdata['code/text'] = outdata['len_codeblocks'] / outdata['body_length']
     outdata['num_tags'] = [len(tags) for tags in indata['tags']]
+    outdata = outdata[outdata['score'] != 0]
 
     outdata.to_csv(outfile, index=False)
 
@@ -69,9 +73,9 @@ def split(filename):
     with open(filename) as f:
         df = pd.read_csv(f)
     train, test = train_test_split(df)
-    datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../data'))
-    train.to_csv(os.path.join(datadir, 'train.csv'))
-    test.to_csv(os.path.join(datadir, 'test.csv'))
+    train.to_csv(os.path.join(datadir, 'train.csv'), index=False)
+    test.to_csv(os.path.join(datadir, 'test.csv'), index=False)
 
 if __name__ == '__main__':
     process_raw('data/raw_data.json', 'data/processed_data.csv')
+    split('data/processed_data.csv')
