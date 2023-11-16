@@ -6,7 +6,8 @@ import pandas as pd
 datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../../data'))
 
 df = pd.read_csv(os.path.join(datadir, 'processed_data.csv'))
-good_score = df['score'] >= 0
+df = df[df['score'] != 0]
+good_score = df['score'] > 0
 good_score.name = 'good_score'
 answered = df['is_answered']
 metadata = ['score', 'owner_rep', 'owner_accept_rate', 'is_closed', 'view_count', 'answer_count', 'is_answered']
