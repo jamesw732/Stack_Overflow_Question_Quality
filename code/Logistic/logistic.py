@@ -2,7 +2,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_validate
 import pandas as pd
 import numpy as np
-import pathlib
 import os
 
 # Perform logistic regression with two definitions for "good question":
@@ -10,8 +9,7 @@ import os
 # 2. is_answered
 # Goal of this is to decide which definition to use for SVM/Trees. Metadata features seem bad to include here. Source?
 
-dir = os.path.join(pathlib.Path(__file__).parent.resolve())
-datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../../data'))
+datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
 
 # Score:
 train = pd.read_csv(os.path.join(datadir, 'train.csv'))

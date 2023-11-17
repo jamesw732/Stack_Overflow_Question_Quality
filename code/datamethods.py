@@ -6,10 +6,9 @@ import numpy as np
 import string
 from sklearn.model_selection import train_test_split
 import os
-import pathlib
 
 
-datadir = os.path.abspath(os.path.join(pathlib.Path(__file__).parent.resolve(), '../data'))
+datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../data'))
 
 
 def get_raw_data(filename, startdate):
