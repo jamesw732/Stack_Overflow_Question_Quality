@@ -15,7 +15,6 @@ datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../dat
 train = pd.read_csv(os.path.join(datadir, 'train.csv'))
 good_score = train['score'] > 0
 is_answered = train['is_answered']
-# Controversial lines:
 drop = ['score', 'is_answered']
 train = train[train.columns.drop(drop)]
 
