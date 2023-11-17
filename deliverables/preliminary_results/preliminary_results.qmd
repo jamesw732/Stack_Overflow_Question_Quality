@@ -1,0 +1,43 @@
+---
+title: "Preliminary Results"
+subtitle: "Stack Overflow Question Quality"
+author: "Ryan Tobin, James Westbrook"
+html-math-method: mathml
+output:
+  html_notebook: default
+  pdf_document: default
+  format: 
+    pdf:
+      include-in-header:
+      - text:
+          \usepackage{amsmath}
+          \usepackage{amsthm}
+      - file: packages.tex
+      - macros.tex
+filters:
+  - parse-latex
+bibliography: references.bib
+csl: diabetologia.csl
+tbl-colwidths: [10]
+---
+
+The predictability of question quality depends on our definition of question quality. As a preliminary step, we used logistic regression with 5-fold cross validation to compare our two definitions. With the score definition, we were able to achieve a cross-validation score of 91.1% (8.9% cross-validation classification error). With the answered/not answered definition, we were able to achieve a cross-validation score of 75% (25% cross-validation classification error). Note that in both cases, datapoints with zero score were removed as we determined them to have too low community activity to be identified as good or bad, thus we removed them from our prediction [@duijn]. Positive/negative score appears to be far more predictable than whether the question will end up answered. For this reason, we will not consider “answered” to be a viable definition of a good question from now on, and will only use “positive score”.
+
+Using score, we can analyze the importance of each feature. We computed the Pearson Correlation Coefficient of each feature with score (not positive or negative score, the raw score). This is summarized in the following histogram:
+
+![Pearson Correlation between Features and Score](correlation.png)
+
+Though none of these features have particularly strong correlation with score, code-to-text ratio has the best, followed by number of codeblocks.
+
+Finally, we performed three classification algorithms on our dataset. The results are summarized in @tbl-classification
+
+| Logistic Regression | SVC | XGBoost |
+|---------------------|-----|---------|
+| 91.067%             | B   | C       |
+
+: Classification Score {#tbl-classification}
+
+
+### References
+::: {#refs}
+:::

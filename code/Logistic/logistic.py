@@ -23,3 +23,13 @@ cv = cross_validate(lr, train, good_score, scoring='accuracy')
 print(f"Mean cross-validation score using positive score as definition of good question: {np.mean(cv['test_score'])}")
 cv = cross_validate(lr, train, is_answered, scoring='accuracy')
 print(f"Mean cross-validation score using answered/not answered as definition of good question: {np.mean(cv['test_score'])}")
+
+test = pd.read_csv(os.path.join(datadir, 'train.csv'))
+test_good_score = test['score'] > 0
+test = test[test.columns.drop(drop)]
+lr.fit(train, good_score)
+predict = lr.predict(test)
+CE = len(np.where(predict != test_good_score)[0]) / len(test_good_score)
+CS = 1 - CE
+print(f"Test Classification error: {CE}")
+print(f"Test Classification score: {CS}")
