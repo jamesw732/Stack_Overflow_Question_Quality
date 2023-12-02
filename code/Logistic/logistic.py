@@ -1,5 +1,5 @@
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_validate
+from sklearn.inspection import permutation_importance
 import pandas as pd
 import numpy as np
 import os
@@ -8,20 +8,20 @@ import os
 
 datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
 
-# Score:
-train = pd.read_csv(os.path.join(datadir, 'train.csv'))
-good_score = train['score'] > 0
+X_train = pd.read_csv(os.path.join(datadir, 'train.csv'))
+y_train = X_train['score'] > 0
 drop = ['score', 'is_answered']
-train = train[train.columns.drop(drop)]
+X_train = X_train[X_train.columns.drop(drop)]
 
 lr = LogisticRegression(max_iter=1000)
+lr.fit(X_train, y_train)
 
-test = pd.read_csv(os.path.join(datadir, 'test.csv'))
-test_good_score = test['score'] > 0
-test = test[test.columns.drop(drop)]
-lr.fit(train, good_score)
-predict = lr.predict(test)
-CE = len(np.where(predict != test_good_score)[0]) / len(test_good_score)
+X_test = pd.read_csv(os.path.join(datadir, 'test.csv'))
+y_test = X_test['score'] > 0
+X_test = X_test[X_test.columns.drop(drop)]
+
+predict = lr.predict(X_test)
+CE = len(np.where(predict != y_test)[0]) / len(y_test)
 CS = 1 - CE
 print(f"Test Classification error: {CE}")
 print(f"Test Classification score: {CS}")
