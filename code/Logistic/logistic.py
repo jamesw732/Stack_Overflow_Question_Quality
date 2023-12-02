@@ -25,3 +25,9 @@ CE = len(np.where(predict != y_test)[0]) / len(y_test)
 CS = 1 - CE
 print(f"Test Classification error: {CE}")
 print(f"Test Classification score: {CS}")
+
+importance = permutation_importance(lr, pd.concat([X_train, X_test]), 
+                                    pd.concat([y_train, y_test]), n_repeats=30,
+                                    random_state=0)
+
+print([(name, val) for val, name in sorted(zip(importance.importances_mean, X_train.columns), reverse=True)])
