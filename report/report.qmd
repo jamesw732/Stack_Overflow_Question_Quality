@@ -1,0 +1,70 @@
+---
+title: "Preliminary Results"
+subtitle: "Stack Overflow Question Quality"
+author: "Ryan Tobin, James Westbrook"
+html-math-method: mathml
+output:
+  html_notebook: default
+  pdf_document: default
+  format: 
+    pdf:
+      include-in-header:
+      - text:
+          \usepackage{amsmath}
+          \usepackage{amsthm}
+      - file: packages.tex
+      - macros.tex
+filters:
+  - parse-latex
+bibliography: references.bib
+csl: diabetologia.csl
+tbl-colwidths: [10]
+---
+# Introduction
+Stack Overflow is an online forum for asking and answering questions about programming and computer science. With millions of users visiting the site every day, it is no stretch to say that it has become a huge part of of the programming community [@stats]. However, a large reason for Stack Overflow's continued success is its emphasis on asking good questions [@howtoask], as these are most likely to be answerable and received well by the community. But of course, poorly framed questions regularly slip through the cracks, and this can create a nuissance for forum regulars and moderators, as answering bad questions is typically a much harder task than answering good ones. There is a flag system in place, and in particular a "needs improvement" flag is attached to questions deemed unfit by users as a way of bringing community attention to it [@flags].
+
+Automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore machine learning models to classify Stack Overflow questions as "good" and "bad" with the future of automated flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
+
+Though our primary goal is prediction, we are also interested in seeing which features of a question are the best predictors of whether it is a good one. In this sense, we can verify Stack Overflow's guidelines for asking good questions.
+
+# Related Works
+A survey of past works on similar topics will give us a hand in defining our features and target.
+
+First, Stack Overflow's official guidelines on asking questions claim that using code snippets with a minimal reproducible example, including relevant tags, using a helpful title, and using proper grammer improves the quality and answerability of questions [@howtoask].
+
+Duijn *et al.* analyzed code snippets in determining quality questions. They defined "good" and "bad" questions using two metrics: score and number of edits. Notably, they filtered out questions with zero score, as these questions were deemed 'not popular enough to get a reliable verdict'. In their analysis, they were able to achieve a classification accuracy of 79.8% using the score metric and 81.2% using the edits metric, both with random forest classification (note: the only features they used were based on code snippets). They found worse results for decision tree and logistic regression. Finally, they found that code/text ratio is a strong predictor of question quality [@duijn].
+<!-- Correa and Sureka analyzed "closed" questions, which are questions deemed unhelpful to the forum and thus were closed off from further contribution. Through the use of several classification methods, they achieved relative success in predicting closed/not closed questions. Some of the most important features they observed are code snippet length and title length - short code snippets and titles were strong indicators of a closed question. These features will be used in our analysis [@closed]. --> 
+<!--I don't think we need to include this paragraph because closed questions are not what we are interested in, and these features are absolutely not specific to this study.-->
+Chua and Banerjee explored the answerability of Stack Overflow questions to develop what they called the Quest-for-Answer framework. For us, the most interesting result they found is that downvoted posts correlated positively with being answered [@answerability].
+
+# Methodology
+<!-- 
+Probably won't have space for discussion on concrete research question, but still good to have in the back of our minds
+- RQ1: How well can we predict whether a Stack Overflow question is good or bad?
+- RQ2: What are the most important features in a good Stack Overflow question? -->
+## Definition of "Good" Question
+The most important part of our methodology is how we defined a "good" question. Ultimately, we decided to use only one criteria for quality, Stack Overflow's builtin "score" metric, which is the sum of all upvotes/downvotes on the post. We will treat a score greater than 0 to mean "good", and a score less than 0 to mean "bad". Note that this excludes scores of 0 completely, since ultimately a score of 0 does not have a good interpretation in our binary classification model. A question with a score of 0 could be truly good or truly bad, however it did not gather enough attention to r
+Additionally, a score of 0 typically means that the question was unpopular, which damages the accuracy of score as a good predictor of question quality. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
+
+We had considered using other metrics for question quality, however we in the end we decided to only use score. Our reasoning is summarized below:
+
+1. First, we considered using 'is answered' as a quality metric, however Chua and Banerjee's result that score and 'is answered' are inversely related suggest that we would not find success with this metric [@answerability]. In our preliminary results, we also found that this metric has very poor predictability, so we decided to cut it from our report completely.
+2. We also considered using edits as a metric, as Yang *et al.* found that it is a great metric [@yang]. However our data retrieval method did not appear to provide much information on edits, therefore we were unable to use it.
+
+## Data
+To obtain our data, we used Stack Overflow's StackAPI library to gather the first 500 questions of each day between October 1 2020 and October 10 2020, which resulted in 5000 datapoints. We then processed this data into features, filtering out questions with a score of zero. Our final result was a dataset with features on 2836 questions.
+
+There is near infinite potential for natural language processing in our features, and we acknowledge that this could be a huge improvement to our model. However, we neglected this due to time constraints.
+
+Otherwise, our features were included on a convenience basis. We excluded metadata features such as view count and answer count since these are both 0 when the question is asked, and would only hurt our model if used in practice. However, we decided metadata on the question asker was fair game.
+
+## Classification
+We used three classification methods: Logistic Regression, Support Vector Classifier, and Extreme Gradient Boosted Trees. We expected logistic regression to perform worse than the other two, however we included it for convenient feature analysis. 
+
+# Results
+## Prediction Quality
+Each of our methods produced successful results. 
+
+### References
+::: {#refs}
+:::
