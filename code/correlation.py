@@ -21,15 +21,18 @@ if __name__ == "__main__":
     vals.sort(key=np.abs)
 
     fig, ax = plt.subplots()
-    ax.barh(keys, vals)
+    ax.barh(keys, vals, height=0.2)
     for s in ['top', 'bottom', 'left', 'right']:
         ax.spines[s].set_visible(False)
     ax.grid(color='grey',
             linestyle='-.', linewidth=0.5,
             alpha = 0.2)
-    # ax.set_title('Pearson Correlation between features and score')
+    ax.set_xlabel('Pearson Correlation Coefficient')
+    ax.set_ylabel('Features')
     plt.subplots_adjust(left=0.25)
     # plt.show()
+    # savedir = os.path.abspath(os.path.join(os.path.realpath(__file__), 
+    #                     '../../deliverables/preliminary_results/correlation.png'))
     savedir = os.path.abspath(os.path.join(os.path.realpath(__file__), 
-                        '../../deliverables/preliminary_results/correlation.png'))
-    plt.savefig(savedir)
+                        '../../report/figures/correlation.png'))
+    plt.savefig(savedir, bbox_inches='tight')

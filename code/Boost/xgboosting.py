@@ -58,6 +58,18 @@ y_pred = xgb_clf.predict(test)
 print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(test_good_score, y_pred)))
 
 xgb.plot_importance(xgb_clf)
-plt.show()
+
+
+for s in ['top', 'bottom', 'left', 'right']:
+    plt.gca().spines[s].set_visible(False)
+plt.grid(color='grey',
+        linestyle='-.', linewidth=0.5,
+        alpha = 0.2)
+plt.subplots_adjust(left=0.26)
+
+savedir = os.path.abspath(os.path.join(os.path.realpath(__file__), 
+                        '../../../report/figures/xgboost_f_scores.png'))
+plt.savefig(savedir, bbox_inches='tight')
+# plt.show()
 
 
