@@ -1,11 +1,16 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.inspection import permutation_importance
+from sklearn.model_selection import cross_validate
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
 
 # Train Logistic regression on the training set and measure error on the test set.
+
+def cv(X_train, y_train, lr):
+    cv = cross_validate(lr, X_train, y_train, scoring='accuracy', cv=5)
+    return np.mean(cv['test_score'])
 
 datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
 
@@ -17,15 +22,24 @@ X_train = X_train[X_train.columns.drop(drop)]
 lr = LogisticRegression(max_iter=1000)
 lr.fit(X_train, y_train)
 
-X_test = pd.read_csv(os.path.join(datadir, 'test.csv'))
-y_test = X_test['score'] > 0
-X_test = X_test[X_test.columns.drop(drop)]
+cv_score = cv(X_train, y_train, lr)
+print(f"Cross Validation Score: {cv_score}")
 
-predict = lr.predict(X_test)
-CE = len(np.where(predict != y_test)[0]) / len(y_test)
-CS = 1 - CE
-print(f"Test Classification error: {CE}")
-print(f"Test Classification score: {CS}")
+# Uncomment this if lr gets best cross validation score
+
+# X_test = pd.read_csv(os.path.join(datadir, 'test.csv'))
+# y_test = X_test['score'] > 0
+# X_test = X_test[X_test.columns.drop(drop)]
+
+# predict = lr.predict(X_test)
+# CE = len(np.where(predict != y_test)[0]) / len(y_test)
+# CS = 1 - CE
+# print(f"Test Classification error: {CE}")
+# print(f"Test Classification score: {CS}")
+
+
+
+"""Feature Importance"""
 
 #Permutation importance:
 # importance = permutation_importance(lr, pd.concat([X_train, X_test]), 

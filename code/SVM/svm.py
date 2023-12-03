@@ -42,14 +42,16 @@ if __name__ == "__main__":
     cv_rbf = cross_validate(svm_rbf, X_train, y_train, scoring='accuracy', cv=7)
     print(np.mean(cv_rbf['test_score']))
 
-    svm_linear.fit(X_train, y_train)
-    X_test = pd.read_csv(os.path.join(datadir, 'test.csv'))
-    y_test = X_test['score'] > 0
-    X_test = X_test[X_test.columns.drop(drop)]
-    X_test = sc.transform(X_test)
+    # Uncomment this if SVM gets best cross validation score, and change to the correct one
 
-    predict = svm_linear.predict(X_test)
-    CE = len(np.where(predict != y_test)[0]) / len(y_test)
-    CS = 1 - CE
-    print(f"Linear Kernel Test Classification error: {CE}")
-    print(f"Linear Kernel Test Classification score: {CS}")
+    # svm_linear.fit(X_train, y_train)
+    # X_test = pd.read_csv(os.path.join(datadir, 'test.csv'))
+    # y_test = X_test['score'] > 0
+    # X_test = X_test[X_test.columns.drop(drop)]
+    # X_test = sc.transform(X_test)
+
+    # predict = svm_linear.predict(X_test)
+    # CE = len(np.where(predict != y_test)[0]) / len(y_test)
+    # CS = 1 - CE
+    # print(f"Linear Kernel Test Classification error: {CE}")
+    # print(f"Linear Kernel Test Classification score: {CS}")
