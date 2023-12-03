@@ -59,7 +59,15 @@ There is near infinite potential for natural language processing in our features
 Otherwise, our features were included on a convenience basis. We excluded metadata features such as view count and answer count since these are both 0 when the question is asked, and would only hurt our model if used in practice. However, we decided metadata on the question asker was fair game.
 
 ## Classification
-We used three classification methods: Logistic Regression, Support Vector Classifier, and Extreme Gradient Boosted Trees. We expected logistic regression to perform worse than the other two, however we included it for convenient feature analysis. 
+We used three classification methods: 
+- Logistic Regression, 
+- Support Vector Classifier with cross-validated kernel,
+- Extreme Gradient Boosted Trees. 
+
+We also analyzed feature importance with three methods:
+- Correlation coefficients with score,
+- Normalized logistic regression coefficients,
+- Presence of each feature in the XGBoost trees (built-in get_score method).
 
 # Results
 ## Prediction Quality
