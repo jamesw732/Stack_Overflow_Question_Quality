@@ -2,6 +2,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import (cross_val_score, StratifiedKFold)
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from imblearn.under_sampling import RandomUnderSampler
 import pandas as pd
 import numpy as np
 import os
@@ -20,6 +21,8 @@ if __name__ == "__main__":
     y_train = X_train['score'] > 0
     drop = ['score', 'is_answered']
     X_train = X_train[X_train.columns.drop(drop)]
+    rus = RandomUnderSampler(random_state=0)
+    X_train, y_train = rus.fit_resample(X_train, y_train)
 
     # PCA:
     # pca = PCA(n_components=2)

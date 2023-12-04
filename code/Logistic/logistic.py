@@ -1,6 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.inspection import permutation_importance
 from sklearn.model_selection import (cross_val_score, StratifiedKFold)
+from imblearn.under_sampling import RandomUnderSampler
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -18,6 +19,9 @@ X_train = pd.read_csv(os.path.join(datadir, 'train.csv'))
 y_train = X_train['score'] > 0
 drop = ['score', 'is_answered']
 X_train = X_train[X_train.columns.drop(drop)]
+
+rus = RandomUnderSampler(random_state=0)
+X_train, y_train = rus.fit_resample(X_train, y_train)
 
 lr = LogisticRegression(max_iter=1000)
 lr.fit(X_train, y_train)
