@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV 
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
+from imblearn.under_sampling import RandomUnderSampler
 
 datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
 
@@ -15,6 +16,9 @@ train = pd.read_csv(os.path.join(datadir, 'train.csv'))
 good_score = (train['score'] > 0)*1
 drop = ['score', 'is_answered']
 train = train[train.columns.drop(drop)]
+
+rus = RandomUnderSampler(random_state=0)
+train, good_score = rus.fit_resample(train, good_score)
 
 #creating test set 
 test = pd.read_csv(os.path.join(datadir, 'test.csv'))
