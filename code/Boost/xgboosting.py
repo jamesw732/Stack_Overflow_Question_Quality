@@ -77,6 +77,7 @@ plt.grid(color='grey',
         linestyle='-.', linewidth=0.5,
         alpha = 0.2)
 plt.subplots_adjust(left=0.26)
+plt.gca().set_title('')
 
 savedir = os.path.abspath(os.path.join(os.path.realpath(__file__), 
                         '../../../report/figures/xgboost_f_scores.png'))
