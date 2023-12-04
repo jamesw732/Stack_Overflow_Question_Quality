@@ -68,16 +68,23 @@ print("Accuracy: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 
 #print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(test_good_score, y_pred)))
 
-xgb.plot_importance(xgb_clf,importance_type='gain')
+# xgb.plot_importance(xgb_clf,importance_type='gain')
 
+importance = xgb_clf.get_booster().get_fscore()
+features = [k for _, k in sorted(zip(importance.values(), importance.keys()))]
+vals = [v for v, _ in sorted(zip(importance.values(), importance.keys()))]
+
+fig, ax = plt.subplots()
+ax.barh(features, vals, align='center', height=0.2)
+ax.set_xlabel('F-score (presence across all trees)')
+ax.set_ylabel('Features')
 
 for s in ['top', 'bottom', 'left', 'right']:
-    plt.gca().spines[s].set_visible(False)
-plt.grid(color='grey',
+    ax.spines[s].set_visible(False)
+ax.grid(color='grey',
         linestyle='-.', linewidth=0.5,
         alpha = 0.2)
 plt.subplots_adjust(left=0.26)
-plt.gca().set_title('')
 
 savedir = os.path.abspath(os.path.join(os.path.realpath(__file__), 
                         '../../../report/figures/xgboost_f_scores.png'))
