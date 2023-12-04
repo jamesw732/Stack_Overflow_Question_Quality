@@ -6,27 +6,34 @@ import numpy as np
 import string
 from sklearn.model_selection import train_test_split
 import os
+import time
 
 
 datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../data'))
 
 
 def get_raw_data(filename, startdate):
-    """Gets first 500 questions from startdate and the next 10 days and dumps them into a JSON.
+    """Gets first 500-ish questions from startdate until keyboard interrupt and dumps them into a JSON.
 
     filename: str, json filename. Careful here, don't overwrite any data.
     startdate: int, seconds since 1/1/1970.
     """
-    site = StackAPI('stackoverflow', key='r)LaTmhkMjEN8CXvN5JLng((')
+    site = StackAPI('stackoverflow', key='uRxCi2XFwSnvGxFe38PEFA((')
     posts = []
-    for i in range(10):
-        posts += site.fetch('questions', filter='withbody', 
-                        fromdate=startdate + 84600 * i, 
-                        todate=startdate + 42300 + 84600 * i)['items']
-    posts_by_id = {int(item['question_id']): item for item in posts}
+    i = 0
+    try:
+        while True:    
+            posts += site.fetch('questions', filter='withbody', 
+                            fromdate=startdate + 84600 * i, 
+                            todate=startdate + 10000 + 84600 * i)['items']
+            i += 1
+            print(i)
+            time.sleep(0.2)
+    finally:
+        posts_by_id = {int(item['question_id']): item for item in posts}
 
-    with open(filename, 'w') as f:
-        json.dump(posts_by_id, f, indent=4)
+        with open(filename, 'w') as f:
+            json.dump(posts_by_id, f, indent=4)
 
 def str_len_no_whitespace(s):
     """Returns the length of given string without considering whitespace"""
@@ -72,5 +79,6 @@ def split(filename):
     test.to_csv(os.path.join(datadir, 'test.csv'), index=False)
 
 if __name__ == '__main__':
-    process_raw('data/raw_data.json', 'data/processed_data.csv')
+    # get_raw_data('data/raw_data2.json', 1609459200)
+    process_raw('data/raw_data2.json', 'data/processed_data.csv')
     split('data/processed_data.csv')
