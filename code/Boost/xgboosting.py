@@ -27,9 +27,9 @@ data_dmatrix = xgb.DMatrix(data = train, label = good_score)
 #setting XGBoost classifier parameters (might want to research how to optimize these)
 params = {
             'objective':'binary:logistic',
-            'max_depth': 12,
+            'max_depth': 4,
             'alpha': 10,
-            'learning_rate': 1.0,
+            'learning_rate': 0.1,
             'base_score':0.5,
             'booster':'gbtree',
             'colsample_bylevel':1,
@@ -64,7 +64,7 @@ print("Accuracy: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 
 #print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(test_good_score, y_pred)))
 
-xgb.plot_importance(xgb_clf)
+xgb.plot_importance(xgb_clf,importance_type='gain')
 
 
 for s in ['top', 'bottom', 'left', 'right']:
