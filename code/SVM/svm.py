@@ -1,5 +1,5 @@
 from sklearn.svm import SVC
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import (cross_val_score, StratifiedKFold)
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import pandas as pd
@@ -10,8 +10,8 @@ import os
 # Cross validate kernel.
 
 def cv(X_train, y_train, svc):
-    cv = cross_validate(svc, X_train, y_train, scoring='accuracy', cv=5)
-    return np.mean(cv['test_score'])
+    kfold = StratifiedKFold(n_splits=5)
+    return np.mean(cross_val_score(svc, X_train, y_train, cv=kfold))
 
 if __name__ == "__main__":
     datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
@@ -30,17 +30,16 @@ if __name__ == "__main__":
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
 
-    svm_linear = SVC(kernel="linear", probability=False, max_iter=1000000)
+    svm_linear = SVC(kernel="linear", probability=False)
     svm_poly = SVC(kernel="poly", probability=False)
-    svm_rbf = SVC(probability=False)
+    svm_rbf = SVC(kernel="rbf", probability=False)
 
-    print("Starting Cross Validation")
-    cv_linear = cross_validate(svm_linear, X_train, y_train, scoring='accuracy', cv=7)
-    print(np.mean(cv_linear['test_score']))
-    cv_poly = cross_validate(svm_poly, X_train, y_train, scoring='accuracy', cv=7)
-    print(np.mean(cv_poly['test_score']))
-    cv_rbf = cross_validate(svm_rbf, X_train, y_train, scoring='accuracy', cv=7)
-    print(np.mean(cv_rbf['test_score']))
+    linear_cv_score = cv(X_train, y_train, svm_linear)
+    print(f"Linear SVM Cross Validation Score: {linear_cv_score}")
+    poly_cv_score = cv(X_train, y_train, svm_poly)
+    print(f"Polynomial Cross Validation Score: {poly_cv_score}")
+    rbf_cv_score = cv(X_train, y_train, svm_rbf)    
+    print(f"RBF Cross Validation Score: {rbf_cv_score}")
 
     # Uncomment this if SVM gets best cross validation score, and change to the correct one
 

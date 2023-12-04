@@ -1,6 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.inspection import permutation_importance
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import (cross_val_score, StratifiedKFold)
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -9,8 +9,8 @@ import os
 # Train Logistic regression on the training set and measure error on the test set.
 
 def cv(X_train, y_train, lr):
-    cv = cross_validate(lr, X_train, y_train, scoring='accuracy', cv=5)
-    return np.mean(cv['test_score'])
+    kfold = StratifiedKFold(n_splits=5)
+    return np.mean(cross_val_score(lr, X_train, y_train, cv=kfold))
 
 datadir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../../../data'))
 
@@ -23,7 +23,7 @@ lr = LogisticRegression(max_iter=1000)
 lr.fit(X_train, y_train)
 
 cv_score = cv(X_train, y_train, lr)
-print(f"Cross Validation Score: {cv_score}")
+print(f"Logistic Regression Cross Validation Score: {cv_score}")
 
 # Uncomment this if lr gets best cross validation score
 
