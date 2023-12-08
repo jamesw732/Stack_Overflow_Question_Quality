@@ -25,7 +25,7 @@ nocite: |
 # Introduction
 Stack Overflow is an online forum for asking and answering questions about programming and computer science. With millions of users visiting the site every day, it is no stretch to say that it has become a huge part of the programming community [@stats]. However, a large reason for Stack Overflow's continued success is its emphasis on asking good questions [@howtoask], as these are most likely to be answerable and received well by the community. But of course, poorly framed questions regularly slip through the cracks, and this can create a nuissance for forum regulars and moderators, as answering bad questions is typically a much harder task than answering good ones.
 
-Currently, there is a flagging system in place, where questions deemed unfit can be flagged for further review. We assert that automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore machine learning models to classify Stack Overflow questions as **good** and **bad** with the potential for automated moderation/flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
+Currently, there is a flagging system in place, where questions deemed unfit for the site can be flagged for further review. We assert that automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore the possibility of classifying Stack Overflow questions as **good** and **bad** using machine learning, with the potential for automated moderation/flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
 
 Though our primary goal is prediction, we are also interested in seeing which features of a question are the best predictors of whether it is a good one. In this sense, we can verify Stack Overflow's guidelines for asking good questions.
 
@@ -46,24 +46,22 @@ Probably won't have space for discussion on concrete research question, but stil
 - RQ1: How well can we predict whether a Stack Overflow question is good or bad?
 - RQ2: What are the most important features in a good Stack Overflow question? -->
 ## Definition of "Good" Question
-The notion of "question quality" is admittedly vague. A more tangible and measurable target is *community reception*, which can be measured by Stack Overflow's builtin *score* metric, and we will assume that community reception is a good heuristic for quality. We labeled questions with scores > 0 as **good**, and ones with score < 0 as **bad**. Questions with a score of 0 were removed from the dataset since we determined the true quality of these is ambiguous. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
+The notion of "question quality" is admittedly vague. A more tangible and measurable target is *community reception*, which can be measured by Stack Overflow's builtin *score* metric, and we will assume that community reception is a good heuristic for quality. We labeled questions with scores > 0 as **good**, and ones with score < 0 as **bad**. Questions with a score of 0 were removed from the dataset since we determined the true quality of these is ambiguous and uninterpretable. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
 <!--We considered other targets, but due to dataset restrictions and analysis of related work, we neglected them.-->
 
 ## Data
-To obtain our data, we used Stack Overflow's StackAPI library to gather data on questions between January 1, 2021 and March 2, 2021. We processed this data into features while filtering out questions with a score of 0, resulting in 13,407 datapoints.
+To obtain our data, we used Stack Overflow's StackAPI library to gather data on questions between January 1, 2021 and March 2, 2021. We processed this data into features while filtering out questions with a score of 0, resulting in 13,407 datapoints. Metadata such as view count was available, but we only included metadata that would be available at the time of posting, such as the owner's rate of accepting questions.
 
-One flaw in our dataset is that 82.24% of our sampled questions have *score* > 0, and due to this we decided to undersample **good** questions during training.
-
-We allowed only for features which are available at the time of posting the question, so metadata such as view count was not used, but the owner's acceptance rate and reputation were.
+It is noteworthy that 82.24% of our sampled questions have *score* > 0, causing a major imbalance in our classes. However, as we expect the distribution of Stack Overflow questions to roughly follow this in general, we did not account for this during training.
 
 ## Classification
-To obtain our results, we evaluated the cross-validation score of the following machine learning algorithms on our training data:
+To obtain our results, we evaluated the 5-fold cross-validation score of the following machine learning algorithms on our training data:
 
 - Logistic Regression, 
-- Support Vector Classifier with linear, polynomial, and RBF kernels,
+- Support Vector Machines with linear, polynomial, and RBF kernels,
 - Extreme Gradient Boosted Trees. 
 
-The algorithm with the greatest cross-validation score was then trained on the training set and evaluated on the test set, and the resulting classification accuracy is our primary result. Referring back to Duijn *et. al*'s study, their 81.2% classification error will be our minimal bar for success, and 90% would be incredible given our primitive features.
+The algorithm with the greatest cross-validation score was then trained on the training set and evaluated on the test set, and the resulting classification accuracy is our primary result. Based on the class distributions, we expect a significantly higher classification accuracy than 82.24%. We place the cutoff for success at 95% classification accuracy.
 <!-- , however an equally important metric is true negative rate. Suppose Stack Overflow implemented our model into its moderation like we hope. Nothing happens upon **good** predictions, but if the model predicts **bad**, and moderation ensues, then we want to be sure that it actually predicted correctly. Thus we computed the true negative rate of the final model:
 
 $$TNR = \frac{TN}{TN + FN}.$$ -->
@@ -78,13 +76,13 @@ Secondarily, we analyzed feature importance with three methods:
 
 ![Cross-Validation Accuracies](figures/cv_accuracies.png){#fig-cv width=40%}
 
-@fig-cv summarizes the cross-validation scores of each method. Extreme Gradient Boosted trees performed by far the best of the 5 methods, and thus we evaluated its performance on the test set. We reported a 75.21% classification accuracy on the test set. Additionally, of the 925 **bad** predictions, 356 were truly **bad**, giving us a true negative rate of 0.385.
+@fig-cv summarizes the cross-validation scores of each method. The performance of each algorithm is strikingly similar, and this is likely due to the class imbalance - everything besides XGBoost is simply predicting **good** every time. Since XGBoost performs the best, we evaluated its performance on the test set and reported a classification accuracy of 87.26%.
 
-@fig-corr shows the Pearson Correlation Coefficients of each feature with raw score. We can see that the owner's acceptance rate, and number of codeblocks have some correlation, however no singular feature appears to have very high correlation.
+@fig-corr shows the Pearson Correlation Coefficients of each feature with raw score. We can see that the owner's acceptance rate, and number of codeblocks are most highly correlated, however no singular feature appears to have very high correlation.
 
-Furthermore, we trained logistic regression on normalized data (all features were transformed to have unit mean and variance), and compared the sizes of the coefficients in @fig-logistic. We see that number of codeblocks is by far the most important, and nothing else is close.
+Furthermore, we trained logistic regression on normalized data (all features were transformed to have unit mean and variance), and compared the sizes of the coefficients in @fig-logistic. We see that number of tags and number of codeblocks are considered most highly, and the rest of the features were not used very much.
 
-Finally, we computed the presence of each feature in our XGBoost tree as seen in @fig-presence. Here, owner reputation, title length, and body length were the three most used features.
+Finally, we computed the presence of each feature in our XGBoost tree as seen in @fig-presence. Here, owner reputation, body length, and title length were the three most used features.
 
 
 ::: {#fig-importance layout-ncol=3}
@@ -99,11 +97,11 @@ Feature Importance
 :::
 
 # Discussion/Conclusions
-Our prediction model performed below our expected standards, both in classification accuracy and TNR. We do not believe that our model in its current form would be useful in moderating Stack Overflow, however we are hopeful that further improvements could push it to our standards. For example, we avoided using natural language processing due to time constraints, and there are certainly interactions between features that we missed. Our model is near-limitlessly scalable with features.
+Though a classification accuracy of 87.26% is somewhat high, it is only 5% better than if we had just predicted **good** every time. As such, we do not believe that our model in its current form would be useful in moderating Stack Overflow. However, we are hopeful that further improvements could push it to our standards - our features and target are extremely flexible. Some immediate additions to be made are natural language processing, interaction, and polynomial features. Our 87.26% result should be regarded as a *baseline* performance on this problem.
 
-However, even if our approach is wrong, there is still some hope for alternatives. Perhaps score is the wrong target to be using (we are only assuming it's a good one), in which case number of edits is a replaceable metric. Or perhaps having a target is wrong, and an unsupervised approach is correct. Even KMeans could work well for binary clustering, and may allow for a richer notion of question quality than our one-dimensional *score* metric.
+There are also alternative approaches to this problem. A cost-sensitive approach is more appropriate than what we have done (see [@cost]), as false-positives and false-negatives are not quite weighed equally in the context of automated moderation. Additionally, an unsupervised clustering approach could yield a richer notion of quality than we can characterize.
 
-Finally, we are unable to report consistent results on feature importance. No features seemed to be great predictors of question quality, though some showed relevance. We are unable to verify Stack Overflows advice, although this is partly due to our features being primitive.
+Finally, we are unable to report consistent results on feature importance - no features seemed to be great predictors of question quality, but some were relevant. We are unable to verify Stack Overflow's guidelines, although our features are at best simplified representations of the guidelines in the first place.
 
 {{< pagebreak >}}
 

@@ -20,9 +20,10 @@ y_train = X_train['score'] > 0
 drop = ['score', 'is_answered']
 X_train = X_train[X_train.columns.drop(drop)]
 
-rus = RandomUnderSampler(random_state=0)
-X_train, y_train = rus.fit_resample(X_train, y_train)
+# rus = RandomUnderSampler(random_state=0)
+# X_train, y_train = rus.fit_resample(X_train, y_train)
 
+# lr = LogisticRegression(max_iter=1000, class_weight={1: 4, 0: 1})
 lr = LogisticRegression(max_iter=1000)
 lr.fit(X_train, y_train)
 

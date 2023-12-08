@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import os
 
 methods = ['Logistic Regression', 'SVM (Linear Kernel)', 'SVM (Polynomial Kernel)', 'SVM (RBF Kernel)', 'XGBoost']
-cv_accuracies = [0.602946577461676, 0.5944411628794728, 0.5765724388724811, 0.6148658911458019, 0.875]
+# cv_accuracies = [0.602946577461676, 0.5944411628794728, 0.5765724388724811, 0.6148658911458019, 0.875]
+cv_accuracies = [0.8246643460964694, 0.8246643460964694, 0.8244654400795625, 0.8244654400795625, 0.8735084636430367]
 cv_accuracies = [100 * v for v in cv_accuracies]
 
 

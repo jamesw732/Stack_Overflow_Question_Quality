@@ -17,8 +17,8 @@ good_score = (train['score'] > 0)*1
 drop = ['score', 'is_answered']
 train = train[train.columns.drop(drop)]
 
-rus = RandomUnderSampler(random_state=0)
-train, good_score = rus.fit_resample(train, good_score)
+# rus = RandomUnderSampler(random_state=0)
+# train, good_score = rus.fit_resample(train, good_score)
 
 #creating test set 
 test = pd.read_csv(os.path.join(datadir, 'test.csv'))
@@ -64,9 +64,10 @@ y_pred = xgb_clf.predict(test)
 
 kfold = StratifiedKFold(n_splits=5)
 results = cross_val_score(xgb_clf, test, test_good_score, cv=kfold)
-print("Accuracy: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+print(results.mean())
+# print("Accuracy: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 
-#print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(test_good_score, y_pred)))
+print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(test_good_score, y_pred)))
 
 # xgb.plot_importance(xgb_clf,importance_type='gain')
 

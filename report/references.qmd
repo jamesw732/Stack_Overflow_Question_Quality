@@ -5,5 +5,7 @@ csl: diabetologia.csl
 nocite: |
   @answerability, @howtoask, @closed, @duijn, @flags, @stats, @yang
 ---
+Links will not work from GitLab. To access links, download this pdf.
+
 ::: {#refs}
 :::

@@ -21,8 +21,8 @@ if __name__ == "__main__":
     y_train = X_train['score'] > 0
     drop = ['score', 'is_answered']
     X_train = X_train[X_train.columns.drop(drop)]
-    rus = RandomUnderSampler(random_state=0)
-    X_train, y_train = rus.fit_resample(X_train, y_train)
+    # rus = RandomUnderSampler(random_state=0)
+    # X_train, y_train = rus.fit_resample(X_train, y_train)
 
     # PCA:
     # pca = PCA(n_components=2)
