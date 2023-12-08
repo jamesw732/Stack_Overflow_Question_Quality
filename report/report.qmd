@@ -1,6 +1,6 @@
 ---
-title: "Preliminary Results"
-subtitle: "Stack Overflow Question Quality"
+title: "Stack Overflow Question Quality"
+subtitle: CS750 Final Project Report
 author: "Ryan Tobin, James Westbrook"
 html-math-method: mathml
 output:
@@ -19,11 +19,13 @@ filters:
 bibliography: references.bib
 csl: diabetologia.csl
 tbl-colwidths: [10]
+nocite: |
+  @*
 ---
 # Introduction
-Stack Overflow is an online forum for asking and answering questions about programming and computer science. With millions of users visiting the site every day, it is no stretch to say that it has become a huge part of the programming community [@stats]. However, a large reason for Stack Overflow's continued success is its emphasis on asking good questions [@howtoask], as these are most likely to be answerable and received well by the community. But of course, poorly framed questions regularly slip through the cracks, and this can create a nuissance for forum regulars and moderators, as answering bad questions is typically a much harder task than answering good ones. There is a flag system in place, and in particular a "needs improvement" flag is attached to questions deemed unfit by users as a way of bringing community attention to it [@flags].
+Stack Overflow is an online forum for asking and answering questions about programming and computer science. With millions of users visiting the site every day, it is no stretch to say that it has become a huge part of the programming community [@stats]. However, a large reason for Stack Overflow's continued success is its emphasis on asking good questions [@howtoask], as these are most likely to be answerable and received well by the community. But of course, poorly framed questions regularly slip through the cracks, and this can create a nuissance for forum regulars and moderators, as answering bad questions is typically a much harder task than answering good ones.
 
-Automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore machine learning models to classify Stack Overflow questions as "good" and "bad" with the future of automated flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
+Currently, there is a flagging system in place, where questions deemed unfit can be flagged for further review. We assert that automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore machine learning models to classify Stack Overflow questions as **good** and **bad** with the potential for automated moderation/flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
 
 Though our primary goal is prediction, we are also interested in seeing which features of a question are the best predictors of whether it is a good one. In this sense, we can verify Stack Overflow's guidelines for asking good questions.
 
@@ -32,9 +34,10 @@ A survey of past works on similar topics will give us a hand in defining our fea
 
 First, Stack Overflow's official guidelines on asking questions claim that using code snippets with a minimal reproducible example, including relevant tags, using a helpful title, and using proper grammer improves the quality and answerability of questions [@howtoask].
 
-Duijn *et al.* analyzed code snippets in determining quality questions. They defined "good" and "bad" questions using two metrics: score and number of edits. Notably, they filtered out questions with zero score, as these questions were deemed 'not popular enough to get a reliable verdict'. In their analysis, they were able to achieve a classification accuracy of 79.8% using the score metric and 81.2% using the edits metric, both with random forest classification (note: the only features they used were based on code snippets). They found worse results for decision tree and logistic regression. Finally, they found that code/text ratio is a strong predictor of question quality [@duijn].
+Duijn *et al.* analyzed code snippets in determining quality questions. They defined **good** and **bad** questions using two metrics: score and number of edits. Notably, they filtered out questions with zero score, as these questions were deemed 'not popular enough to get a reliable verdict'. In their analysis, they were able to achieve a classification accuracy of 79.8% using the score metric and 81.2% using the edits metric, both with random forest classification (note: the only features they used were based on code snippets). They found worse results for decision tree and logistic regression. Finally, they found that code/text ratio is a strong predictor of question quality [@duijn].
 <!-- Correa and Sureka analyzed "closed" questions, which are questions deemed unhelpful to the forum and thus were closed off from further contribution. Through the use of several classification methods, they achieved relative success in predicting closed/not closed questions. Some of the most important features they observed are code snippet length and title length - short code snippets and titles were strong indicators of a closed question. These features will be used in our analysis [@closed]. --> 
 <!--I don't think we need to include this paragraph because closed questions are not what we are interested in, and these features are absolutely not specific to this study.-->
+
 Chua and Banerjee explored the answerability of Stack Overflow questions to develop what they called the Quest-for-Answer framework. For us, the most interesting result they found is that downvoted posts correlated positively with being answered [@answerability].
 
 # Methodology
@@ -43,37 +46,66 @@ Probably won't have space for discussion on concrete research question, but stil
 - RQ1: How well can we predict whether a Stack Overflow question is good or bad?
 - RQ2: What are the most important features in a good Stack Overflow question? -->
 ## Definition of "Good" Question
-The most important part of our methodology is how we defined a "good" question. Ultimately, we decided to use only one criteria for quality, Stack Overflow's builtin "score" metric, which is the sum of all upvotes/downvotes on the post. We will treat a score greater than 0 to mean "good", and a score less than 0 to mean "bad". Note that this excludes scores of 0 completely, since ultimately a score of 0 does not have a good interpretation in our binary classification model. A question with a score of 0 could be truly good or truly bad, however it did not gather enough attention to r
-Additionally, a score of 0 typically means that the question was unpopular, which damages the accuracy of score as a good predictor of question quality. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
-
-We had considered using other metrics for question quality, however we in the end we decided to only use score. Our reasoning is summarized below:
-
-1. First, we considered using 'is answered' as a quality metric, however Chua and Banerjee's result that score and 'is answered' are inversely related suggest that we would not find success with this metric [@answerability]. In our preliminary results, we also found that this metric has very poor predictability, so we decided to cut it from our report completely.
-2. We also considered using edits as a metric, as Yang *et al.* found that it is a great metric [@yang]. However our data retrieval method did not appear to provide much information on edits, therefore we were unable to use it.
+The notion of "question quality" is admittedly vague. A more tangible and measurable target is *community reception*, which can be measured by Stack Overflow's builtin *score* metric, and we will assume that community reception is a good heuristic for quality. We labeled questions with scores > 0 as **good**, and ones with score < 0 as **bad**. Questions with a score of 0 were removed from the dataset since we determined the true quality of these is ambiguous. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
+<!--We considered other targets, but due to dataset restrictions and analysis of related work, we neglected them.-->
 
 ## Data
-To obtain our data, we used Stack Overflow's StackAPI library to gather the first 500 questions of each day between October 1 2020 and October 10 2020, which resulted in 5000 datapoints. We then processed this data into features, filtering out questions with a score of zero. Our final result was a dataset with features on 2836 questions.
+To obtain our data, we used Stack Overflow's StackAPI library to gather data on questions between January 1, 2021 and March 2, 2021. We processed this data into features while filtering out questions with a score of 0, resulting in 13,407 datapoints.
 
-There is near infinite potential for natural language processing in our features, and we acknowledge that this could be a huge improvement to our model. However, we neglected this due to time constraints.
+One flaw in our dataset is that 82.24% of our sampled questions have *score* > 0, and due to this we decided to undersample **good** questions during training.
 
-Otherwise, our features were included on a convenience basis. We excluded metadata features such as view count and answer count since these are both 0 when the question is asked, and would only hurt our model if used in practice. However, we decided metadata on the question asker was fair game.
+We allowed only for features which are available at the time of posting the question, so metadata such as view count was not used, but the owner's acceptance rate and reputation were.
 
 ## Classification
-We used three classification methods:
+To obtain our results, we evaluated the cross-validation score of the following machine learning algorithms on our training data:
 
 - Logistic Regression, 
-- Support Vector Classifier with cross-validated kernel,
+- Support Vector Classifier with linear, polynomial, and RBF kernels,
 - Extreme Gradient Boosted Trees. 
 
-We also analyzed feature importance with three methods:
+The algorithm with the greatest cross-validation score was then trained on the training set and evaluated on the test set, and the resulting classification accuracy is our primary result. Referring back to Duijn *et. al*'s study, their 81.2% classification error will be our minimal bar for success, and 90% would be incredible given our primitive features.
+<!-- , however an equally important metric is true negative rate. Suppose Stack Overflow implemented our model into its moderation like we hope. Nothing happens upon **good** predictions, but if the model predicts **bad**, and moderation ensues, then we want to be sure that it actually predicted correctly. Thus we computed the true negative rate of the final model:
+
+$$TNR = \frac{TN}{TN + FN}.$$ -->
+
+Secondarily, we analyzed feature importance with three methods:
 
 - Correlation coefficients with score,
 - Normalized logistic regression coefficients,
-- Presence of each feature in the XGBoost trees (built-in get_score method).
+- Presence of each feature in the XGBoost trees.
 
 # Results
-## Prediction Quality
-Each of our methods produced successful results. 
+
+![Cross-Validation Accuracies](figures/cv_accuracies.png){#fig-cv width=40%}
+
+@fig-cv summarizes the cross-validation scores of each method. Extreme Gradient Boosted trees performed by far the best of the 5 methods, and thus we evaluated its performance on the test set. We reported a 75.21% classification accuracy on the test set. Additionally, of the 925 **bad** predictions, 356 were truly **bad**, giving us a true negative rate of 0.385.
+
+@fig-corr shows the Pearson Correlation Coefficients of each feature with raw score. We can see that the owner's acceptance rate, and number of codeblocks have some correlation, however no singular feature appears to have very high correlation.
+
+Furthermore, we trained logistic regression on normalized data (all features were transformed to have unit mean and variance), and compared the sizes of the coefficients in @fig-logistic. We see that number of codeblocks is by far the most important, and nothing else is close.
+
+Finally, we computed the presence of each feature in our XGBoost tree as seen in @fig-presence. Here, owner reputation, title length, and body length were the three most used features.
+
+
+::: {#fig-importance layout-ncol=3}
+
+![Pearson Correlation Coefficients between Features and Score](figures/correlation.png){#fig-corr}
+
+![Normalized Logistic Regression Coefficients](figures/normalized_logistic_coef.png){#fig-logistic}
+
+![XGBoost Presence](figures/xgboost_f_scores.png){#fig-presence}
+
+Feature Importance
+:::
+
+# Discussion/Conclusions
+Our prediction model performed below our expected standards, both in classification accuracy and TNR. We do not believe that our model in its current form would be useful in moderating Stack Overflow, however we are hopeful that further improvements could push it to our standards. For example, we avoided using natural language processing due to time constraints, and there are certainly interactions between features that we missed. Our model is near-limitlessly scalable with features.
+
+However, even if our approach is wrong, there is still some hope for alternatives. Perhaps score is the wrong target to be using (we are only assuming it's a good one), in which case number of edits is a replaceable metric. Or perhaps having a target is wrong, and an unsupervised approach is correct. Even KMeans could work well for binary clustering, and may allow for a richer notion of question quality than our one-dimensional *score* metric.
+
+Finally, we are unable to report consistent results on feature importance. No features seemed to be great predictors of question quality, though some showed relevance. We are unable to verify Stack Overflows advice, although this is partly due to our features being primitive.
+
+{{< pagebreak >}}
 
 ### References
 ::: {#refs}
