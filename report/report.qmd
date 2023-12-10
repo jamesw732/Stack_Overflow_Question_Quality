@@ -27,7 +27,7 @@ Stack Overflow is an online forum for asking and answering questions about progr
 
 Currently, there is a flagging system in place, where questions deemed unfit for the site can be flagged for further review. We assert that automation could make the flag system more efficient since a question could be automatically flagged before any human even sees it (and then thinks about it and types up a response to it). Our goal in this paper is to explore the possibility of classifying Stack Overflow questions as **good** and **bad** using machine learning, with the potential for automated moderation/flagging in the back of our heads. We believe such a model, if it exists, could reduce the workload of moderators and active community members.
 
-Though our primary goal is prediction, we are also interested in seeing which features of a question are the best predictors of whether it is a good one. In this sense, we can verify Stack Overflow's guidelines for asking good questions.
+Though we are primarily focused on prediction, we are also interested in seeing which features of a question are the best predictors of whether it is a good one. In this sense, we can verify Stack Overflow's guidelines for asking good questions.
 
 # Related Works
 A survey of past works on similar topics will give us a hand in defining our features and target.
@@ -46,11 +46,11 @@ Probably won't have space for discussion on concrete research question, but stil
 - RQ1: How well can we predict whether a Stack Overflow question is good or bad?
 - RQ2: What are the most important features in a good Stack Overflow question? -->
 ## Definition of "Good" Question
-The notion of "question quality" is admittedly vague. A more tangible and measurable target is *community reception*, which can be measured by Stack Overflow's builtin *score* metric, and we will assume that community reception is a good heuristic for quality. We labeled questions with scores > 0 as **good**, and ones with score < 0 as **bad**. Questions with a score of 0 were removed from the dataset since we determined the true quality of these is ambiguous and uninterpretable. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
+The notion of "question quality" is admittedly vague. A more tangible and measurable target is *community reception*, which can be measured by Stack Overflow's builtin *score* metric, and we will assume that community reception is a good heuristic for quality. We labeled questions with score > 0 as **good**, and ones with score < 0 as **bad**. Questions with a score of 0 were removed from the dataset since these are uninterpretable as **good** or **bad** due to low popularity or being highly controversial. Duijn *et al.* reported a similar interpretation in their paper [@duijn].
 <!--We considered other targets, but due to dataset restrictions and analysis of related work, we neglected them.-->
 
 ## Data
-To obtain our data, we used Stack Overflow's StackAPI library to gather data on questions between January 1, 2021 and March 2, 2021. We processed this data into features while filtering out questions with a score of 0, resulting in 13,407 datapoints. Metadata such as view count was available, but we only included metadata that would be available at the time of posting, such as the owner's rate of accepting questions.
+To obtain our data, we used Stack Overflow's StackAPI library to gather data on questions between January 1, 2021 and March 2, 2021. We processed this data into basic features while filtering out questions with a score of 0, resulting in 13,407 datapoints. Examples of features include number of tags, number of codeblocks, and number of non-whitespace characters in the body. Metadata such as view count was available, but we restricted ourselves to metadata that would be available at the time of posting.
 
 It is noteworthy that 82.24% of our sampled questions have *score* > 0, causing a major imbalance in our classes. However, as we expect the distribution of Stack Overflow questions to roughly follow this in general, we did not account for this during training.
 
@@ -97,7 +97,7 @@ Feature Importance
 :::
 
 # Discussion/Conclusions
-Though a classification accuracy of 87.26% is somewhat high, it is only 5% better than if we had just predicted **good** every time. As such, we do not believe that our model in its current form would be useful in moderating Stack Overflow. However, we are hopeful that further improvements could push it to our standards - our features and target are extremely flexible. Some immediate additions to be made are natural language processing, interaction, and polynomial features. Our 87.26% result should be regarded as a *baseline* performance on this problem.
+Though a classification accuracy of 87.26% is somewhat high, it is only 5% better than if we had just predicted **good** every time. As such, we do not believe that our model in its current form would be useful in moderating Stack Overflow. However, we are hopeful that further improvements could push it to our standards - our features and target are extremely flexible. Extending our scope beyond this project, we would like to incorporate polynomial features, interaction features, and natural langauge processing (in that order) into our model. Our 87.26% result should be regarded as a *baseline* performance on this problem. 
 
 There are also alternative approaches to this problem. A cost-sensitive approach is more appropriate than what we have done (see [@cost]), as false-positives and false-negatives are not quite weighed equally in the context of automated moderation. Additionally, an unsupervised clustering approach could yield a richer notion of quality than we can characterize.
 
